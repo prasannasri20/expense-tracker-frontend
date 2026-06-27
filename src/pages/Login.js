@@ -1,107 +1,80 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../services/api";
+import "./Login.css";
 
 function Login() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleLogin = async (e) => {
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
-        e.preventDefault();
+      localStorage.setItem("token", response.data.token);
 
-        try {
+      toast.success("Login Successful!");
 
-            const response = await api.post("/auth/login", {
-                email,
-                password
-            });
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
 
-            localStorage.setItem("token", response.data.token);
+    } catch (error) {
+      toast.error("Invalid Email or Password");
+      console.log(error);
+    }
+  };
 
-            alert(response.data.message);
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Expense Tracker</h2>
+        <p className="subtitle">Login to manage your expenses</p>
 
-            navigate("/dashboard");
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label>Email</label>
 
-        } catch (error) {
+            <input
+              type="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-            alert("Invalid Email or Password");
+          <div className="form-group">
+            <label>Password</label>
 
-            console.log(error);
+            <input
+              type="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        }
+          <button type="submit" className="login-btn">
+            Login
+          </button>
+        </form>
 
-    };
-
-    return (
-
-        <div className="login-container">
-
-            <h2>Expense Tracker</h2>
-
-            <form onSubmit={handleLogin}>
-
-                <div>
-
-                    <label>Email</label>
-                    <br />
-
-                    <input
-                        type="email"
-                        placeholder="Enter Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                </div>
-
-                <br />
-
-                <div>
-
-                    <label>Password</label>
-                    <br />
-
-                    <input
-                        type="password"
-                        placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                </div>
-
-                <br />
-
-                <button type="submit">
-
-                    Login
-
-                </button>
-
-            </form>
-
-            <br />
-
-            <p>
-
-                Don't have an account?
-
-                <Link to="/register">
-
-                    Register
-
-                </Link>
-
-            </p>
-
-        </div>
-
-    );
-
+        <p className="register-link">
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Login;
