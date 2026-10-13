@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:"https://expense-tracker-backend-oafy.onrender.com",
+  baseURL:"https://amino-composer-self-mail.trycloudflare.com",
 });
 
 api.interceptors.request.use((config) => {
